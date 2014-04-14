@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="css/main.css" />
+
+  <title>Caio Teixeira Blog</title>
+</head>
+
+<body>
+  <a href="/" class="main-title">
+    Caio Teixeira Blog
+  </a>
+
+
+  <div id="content">
+  
+    {% for article in articles %}
+      <div class="article">
+          <div class="post-title" href="/"{{article.key().id()}}>{{article.subject}}</div>
+          <pre class="post-content">{{article.content}}</pre>
+      </div>
+    {% endfor %}
+
+  </div>
+</body>
+
+</html>
