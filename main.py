@@ -76,7 +76,8 @@ class SignUpHandler(Handler):
 		elif not vVerify:
 			verify_error = "Your passwords didn't match."
 		if  vEmail == None:
-			email_error = "That's not a valid email."
+			if email != "":
+				email_error = "That's not a valid email."
 		self.render("signup.html", username = username, password = password, username_error = user_error, verify = verify, email = email, password_error = password_error,
 			email_error = email_error, verify_error = verify_error)
 
@@ -103,20 +104,20 @@ class SignUpHandler(Handler):
 		vEmail = self.validate_email(email)
 		vVerify = password == verify
 
-		if(vUsername and vPassword and vEmail and vVerify):
+		if(vUsername and vPassword and vVerify):
 			validate = user.newUser(username, password)
 			if(validate == None):
 				vUsername = 0
 				self.render_front(username, password, verify, email, vUsername, vPassword, vEmail, vVerify)
 			else:
-				self.response.headers.add_header('Set-Cookie', "user=%s; Path=/" % validate)
-				self.redirect("/welcome")
+				self.response.headers.add_header('Set-Cookie', "user_id=%s; Path=/" % validate)
+				self.redirect("/blog/welcome")
 		else:
 			self.render_front(username, password, verify, email, vUsername, vPassword, vEmail, vVerify)
 
 class WelcomeHandler(Handler):
 	def render_front(self):
-		cookie = self.request.cookies.get('user')
+		cookie = self.request.cookies.get('user_id')
 		username = user.validateUserHash(cookie)
 		if(username):
 			self.render("welcome.html", user = username)
@@ -128,4 +129,5 @@ class WelcomeHandler(Handler):
 
 #Handlers
 #The last handler uses regex to find the post id in the url.
-app = webapp2.WSGIApplication([('/', MainPage), ('/signup', SignUpHandler), ('/welcome', WelcomeHandler)  ,('/newpost', NewPost), (r'/(\d+)', PostHandler)], debug=True)
+app = webapp2.WSGIApplication([('/', MainPage),('/blog', MainPage), ('/signup', SignUpHandler),('/blog/signup', SignUpHandler) 
+	,('/welcome', WelcomeHandler)  , ('/blog/welcome', WelcomeHandler),('/newpost', NewPost), ('/blog/newpost', NewPost) ,(r'/(\d+)', PostHandler)], debug=True)
